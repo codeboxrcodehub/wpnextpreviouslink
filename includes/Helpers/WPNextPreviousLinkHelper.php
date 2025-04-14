@@ -1,29 +1,9 @@
 <?php
 
 /**
- * The file that defines the core plugin helper class
+ * Class WPNextPreviousLinkHelper
  *
- * This class has some static helper methods
- *
- * @link       codeboxr.com
- * @since      1.0.0
- *
- * @package    WPNextPreviousLink
- * @subpackage WPNextPreviousLink/includes
- */
-
-/**
- * The core plugin helper class.
- *
- * This is used to define static methods
- *
- * Also maintains the unique identifier of this plugin as well as the current
- * version of the plugin.
- *
- * @since      1.0.0
- * @package    WPNextPreviousLink
- * @subpackage WPNextPreviousLink/includes
- * @author     CBX Team  <info@codeboxr.com>
+ * This class provides lots of static methods
  */
 class WPNextPreviousLinkHelper {
 	/**
@@ -55,7 +35,7 @@ class WPNextPreviousLinkHelper {
 	/**
 	 * Add utm params to any url
 	 *
-	 * @param  string  $url
+	 * @param string $url
 	 *
 	 * @return string
 	 */
@@ -77,27 +57,28 @@ class WPNextPreviousLinkHelper {
 	 * Return the key value pair of posttypes
 	 *
 	 * @param $all_post_types
-	 * @since 2.6.4
+	 *
 	 * @return array
+	 * @since 2.6.4
 	 */
 	public static function get_post_types_formatted( $all_post_types ) {
-		$posts_defination = [];
+		$posts_definition = [];
 
 		foreach ( $all_post_types as $key => $post_type_defination ) {
 			foreach ( $post_type_defination as $post_type_type => $data ) {
 				if ( $post_type_type == 'label' ) {
-					$opt_grouplabel = $data;
+					$opt_group_label = $data;
 				}
 
 				if ( $post_type_type == 'types' ) {
 					foreach ( $data as $opt_key => $opt_val ) {
-						$posts_defination[ $opt_grouplabel ][ $opt_key ] = $opt_val;
+						$posts_definition[ $opt_group_label ][ $opt_key ] = $opt_val;
 					}
 				}
 			}
 		}
 
-		return $posts_defination;
+		return $posts_definition;
 	}//end get_post_types_formatted
 
 	/**
@@ -142,7 +123,7 @@ class WPNextPreviousLinkHelper {
 	/**
 	 * Set settings fields
 	 *
-	 * @return type array
+	 * @return mixed|null
 	 */
 	public static function get_settings_sections() {
 		$sections = [
@@ -178,13 +159,13 @@ class WPNextPreviousLinkHelper {
 	 */
 	public static function getAllOptionNames() {
 		global $wpdb;
-		$prefix       = 'wpnextpreviouslink_';
+		$prefix = 'wpnextpreviouslink_';
 
 		$wild = '%';
 		$like = $wpdb->esc_like( $prefix ) . $wild;
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$option_names = $wpdb->get_results( $wpdb->prepare("SELECT * FROM {$wpdb->options} WHERE option_name LIKE %s", $like), ARRAY_A );
+		$option_names = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->options} WHERE option_name LIKE %s", $like ), ARRAY_A );
 
 		return apply_filters( 'wpnextpreviouslink_option_names', $option_names );
 	}//end method getAllOptionNames
@@ -195,12 +176,11 @@ class WPNextPreviousLinkHelper {
 	 * @return array
 	 * @since 2.7.1
 	 */
-	public static function getAllOptionNamesValues()
-	{
+	public static function getAllOptionNamesValues() {
 		$option_values = self::getAllOptionNames();
 		$names_only    = [];
 
-		foreach ($option_values as $key => $value) {
+		foreach ( $option_values as $key => $value ) {
 			$names_only[] = $value['option_name'];
 		}
 
@@ -215,7 +195,7 @@ class WPNextPreviousLinkHelper {
 	 * @since 2.7.1
 	 */
 	public static function wpnextpreviouslink_settings_fields() {
-		$table_html = '<div id="wpnextpreviouslink_resetinfo_wrap">'.esc_html__('Loading ...', 'wpnextpreviouslink').'</div>';
+		$table_html = '<div id="wpnextpreviouslink_resetinfo_wrap">' . esc_html__( 'Loading ...', 'wpnextpreviouslink' ) . '</div>';
 
 		//get default values for basic settings
 		$settings = new WPNextPreviousLink_Settings_API();
@@ -246,15 +226,14 @@ class WPNextPreviousLinkHelper {
 			$wpnp_image_type_options[ $key ] = $value;
 		}
 
-
-		$wpnp_link_img_src_p = plugins_url( 'assets/images/l_' . $settings->get_field( 'wpnp_image_name', 'wpnextpreviouslink_basics', 'arrow' ) . '.png', dirname( __FILE__ ) );
-		$wpnp_link_img_src_n = plugins_url( 'assets/images/r_' . $settings->get_field( 'wpnp_image_name', 'wpnextpreviouslink_basics', 'arrow' ) . '.png', dirname( __FILE__ ) );
+		$wpnp_link_img_src_p = WPNEXTPREVIOUSLINK_ROOT_URL. 'assets/images/l_' . $settings->get_field( 'wpnp_image_name', 'wpnextpreviouslink_basics', 'arrow' ) . '.png';
+		$wpnp_link_img_src_n = WPNEXTPREVIOUSLINK_ROOT_URL. 'assets/images/r_' . $settings->get_field( 'wpnp_image_name', 'wpnextpreviouslink_basics', 'arrow' ) . '.png';
 
 		$wpnp_link_img_src_p = apply_filters( 'wpnp_showleftimg', $wpnp_link_img_src_p, $wpnp_saved_image_type );
 		$wpnp_link_img_src_n = apply_filters( 'wpnp_showrightimg', $wpnp_link_img_src_n, $wpnp_saved_image_type );
 
 		$settings_fields = [
-			'wpnextpreviouslink_basics'   => [
+			'wpnextpreviouslink_basics'     => [
 				[
 					'name'    => 'basic_fields_heading',
 					'label'   => esc_html__( 'Basic Settings', 'wpnextpreviouslink' ),
@@ -464,15 +443,15 @@ class WPNextPreviousLinkHelper {
 					'label' => esc_html__( 'Arrow Preview', 'wpnextpreviouslink' ),
 					//
 					'desc'  => '<div style="margin-top:10px;" id="wpnp_next_previous" >
-                                         <img style="width: 32px; height: auto;" id="wpnp_previousimg" src="' . esc_url($wpnp_link_img_src_p) . '" alt="' . esc_html__( 'Prev Preview Image(Width: 32px, Height: auto)', 'wpnextpreviouslink' ) . ' " title="' . esc_html__( 'Prev Preview Image(Width: 32px, Height: auto)', 'wpnextpreviouslink' ) . ' " /> 
-                                         <img style="width: 32px; height: auto; margin-left: 50px;" id="wpnp_nextimg" src="' . esc_url($wpnp_link_img_src_n) . '" alt="' . esc_html__( 'Next Preview Image(Width: 32px, Height: auto)', 'wpnextpreviouslink' ) . ' " title="' . esc_html__( 'Next Preview Image(Width: 32px, Height: auto)', 'wpnextpreviouslink' ) . ' " />
+                                         <img style="width: 32px; height: auto;" id="wpnp_previousimg" src="' . esc_url( $wpnp_link_img_src_p ) . '" alt="' . esc_html__( 'Prev Preview Image', 'wpnextpreviouslink' ) . ' " title="' . esc_html__( 'Prev Preview Image(Width: 32px, Height: 32px)', 'wpnextpreviouslink' ) . ' " /> 
+                                         <img style="width: 32px; height: auto; margin-left: 50px;" id="wpnp_nextimg" src="' . esc_url( $wpnp_link_img_src_n ) . '" alt="' . esc_html__( 'Next Preview Image', 'wpnextpreviouslink' ) . ' " title="' . esc_html__( 'Next Preview Image(Width: 32px, Height: 32px)', 'wpnextpreviouslink' ) . ' " />
                                 </div>',
 					'type'  => 'info',
 				],
 				// phpcs:enable PluginCheck.CodeAnalysis.ImageFunctions.NonEnqueuedImage
 
 			],
-			'wpnextpreviouslink_postcats' => [
+			'wpnextpreviouslink_postcats'   => [
 				[
 					'name'    => 'navigate_postcats_heading',
 					'label'   => esc_html__( 'Post type specific taxonomy navigation', 'wpnextpreviouslink' ),
@@ -505,7 +484,7 @@ class WPNextPreviousLinkHelper {
 					],
 				],
 			],
-			'wpnextpreviouslink_ga'       => [
+			'wpnextpreviouslink_ga'         => [
 				[
 					'name'    => 'wpnp_ga_enabled',
 					'label'   => esc_html__( 'Google Enalytics Trackings', 'wpnextpreviouslink' ),
@@ -535,7 +514,7 @@ class WPNextPreviousLinkHelper {
 					'default' => 'on',
 				],
 			],
-			'wpnextpreviouslink_tools'    => [
+			'wpnextpreviouslink_tools'      => [
 				[
 					'name'    => 'tools_heading',
 					'label'   => esc_html__( 'Tools Settings', 'wpnextpreviouslink' ),
@@ -556,16 +535,14 @@ class WPNextPreviousLinkHelper {
 				[
 					'name'    => 'reset_data',
 					'label'   => esc_html__( 'Reset all data', 'wpnextpreviouslink' ),
-					'desc'    => $table_html.'<p>'.esc_html__('Reset option values and all tables created by this plugin', 'wpnextpreviouslink').'<a data-busy="0" class="button secondary ml-20" id="reset_data_trigger"  href="#">'.esc_html__('Reset Data', 'wpnextpreviouslink').'</a></p>',
+					'desc'    => $table_html . '<p>' . esc_html__( 'Reset option values and all tables created by this plugin', 'wpnextpreviouslink' ) . '<a data-busy="0" class="button secondary ml-20" id="reset_data_trigger"  href="#">' . esc_html__( 'Reset Data', 'wpnextpreviouslink' ) . '</a></p>',
 					'type'    => 'html',
 					'default' => 'off'
 				]
 			]
 		];
 
-		$settings_fields = apply_filters( 'wpnp_setting_fields', $settings_fields );
-
-		return $settings_fields;
+		return apply_filters( 'wpnp_setting_fields', $settings_fields );
 	}//end method wpnextpreviouslink_settings_fields
 
 	/**
@@ -594,7 +571,6 @@ class WPNextPreviousLinkHelper {
 	 * @since 2.7.1
 	 */
 	public static function wpnextprevios_image_type() {
-
 		$image_types = [ '0' => 'Arrow' ];
 
 		return apply_filters( 'wpnp_image_options', $image_types );
@@ -609,7 +585,6 @@ class WPNextPreviousLinkHelper {
 	 */
 	public static function setting_reset_html_table() {
 		$option_values = WPNextPreviousLinkHelper::getAllOptionNames();
-
 
 		$table_html = '<div id="wpnextpreviouslink_resetinfo">';
 
@@ -631,10 +606,10 @@ class WPNextPreviousLinkHelper {
 			$alternate_class = ( $i % 2 == 0 ) ? 'alternate' : '';
 			$i ++;
 
-			$table_html .= '<tr class="'.esc_attr($alternate_class).'">
-									<td class="row-title"><input checked class="magic-checkbox reset_options" type="checkbox" name="reset_options['.$value['option_name'].']" id="reset_options_'.esc_attr($value['option_name']).'" value="'.$value['option_name'].'" />
-  <label for="reset_options_'.esc_attr($value['option_name']).'">'.esc_attr($value['option_name']).'</td>
-									<td>'.esc_attr($value['option_id']).'</td>									
+			$table_html .= '<tr class="' . esc_attr( $alternate_class ) . '">
+									<td class="row-title"><input checked class="magic-checkbox reset_options" type="checkbox" name="reset_options[' . $value['option_name'] . ']" id="reset_options_' . esc_attr( $value['option_name'] ) . '" value="' . $value['option_name'] . '" />
+  <label for="reset_options_' . esc_attr( $value['option_name'] ) . '">' . esc_attr( $value['option_name'] ) . '</td>
+									<td>' . esc_attr( $value['option_id'] ) . '</td>									
 								</tr>';
 		}
 
@@ -656,18 +631,20 @@ class WPNextPreviousLinkHelper {
 	/**
 	 * Next prev post type order
 	 *
-	 * @return void
+	 * @param $post_type
+	 *
+	 * @return mixed|null
 	 */
-	public static function post_type_orders_by($post_type = '') {
-		return apply_filters('wpnextpreviouslink_post_type_orders_by', [
-			'date' => esc_attr__('Date(default in wordpress core)', 'wpnextpreviouslink'),
-		], $post_type);
+	public static function post_type_orders_by( $post_type = '' ) {
+		return apply_filters( 'wpnextpreviouslink_post_type_orders_by', [
+			'date' => esc_attr__( 'Date(default in wordpress core)', 'wpnextpreviouslink' ),
+		], $post_type );
 	}//end method post_type_orders_by
 
 	/**
 	 * Kses wysiwyg html
 	 *
-	 * @param  string  $html
+	 * @param string $html
 	 *
 	 * @return mixed|string
 	 *
@@ -745,4 +722,49 @@ class WPNextPreviousLinkHelper {
 		// Return false if the plugin is not found
 		return '';
 	}//end method get_pro_addon_version
+
+	/**
+	 * Returns codeboxr news feeds using transient cache
+	 *
+	 * @return false|mixed|\SimplePie\Item[]|null
+	 */
+	public static function codeboxr_news_feed() {
+		$cache_key   = 'codeboxr_news_feed_cache';
+		$cached_feed = get_transient( $cache_key );
+
+		$news = false;
+
+		if ( false === $cached_feed ) {
+			include_once ABSPATH . WPINC . '/feed.php'; // Ensure feed functions are available
+			$feed = fetch_feed( 'https://codeboxr.com/feed?post_type=post' );
+
+			if ( is_wp_error( $feed ) ) {
+				return false; // Return false if there's an error
+			}
+
+			$feed->init();
+
+			$feed->set_output_encoding( 'UTF-8' );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        // this is the encoding parameter, and can be left unchanged in almost every case
+			$feed->handle_content_type();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                // this double-checks the encoding type
+			$feed->set_cache_duration( 21600 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          // 21,600 seconds is six hours
+			$limit  = $feed->get_item_quantity( 10 );                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     // fetches the 18 most recent RSS feed stories
+			$items  = $feed->get_items( 0, $limit );
+			$blocks = array_slice( $items, 0, 10 );
+
+			$news = [];
+			foreach ( $blocks as $block ) {
+				$url   = $block->get_permalink();
+				$url   = WPNextPreviousLinkHelper::url_utmy( esc_url( $url ) );
+				$title = $block->get_title();
+
+				$news[] = ['url' => $url, 'title' => $title];
+			}
+
+			set_transient( $cache_key, $news, HOUR_IN_SECONDS * 6 ); // Cache for 6 hours
+		} else {
+			$news = $cached_feed;
+		}
+
+		return $news;
+	}//end method codeboxr_news_feed
 }//end class WPNextPreviousLinkHelper
